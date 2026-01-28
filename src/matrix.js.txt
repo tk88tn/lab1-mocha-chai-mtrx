@@ -1,0 +1,88 @@
+class Matrix {
+
+  static validate(A) {
+    if (!Array.isArray(A) || A.length === 0) {
+      throw new Error("Invalid matrix");
+    }
+    if (!Array.isArray(A[0]) || A[0].length === 0) {
+      throw new Error("Invalid matrix");
+    }
+
+    const cols = A[0].length;
+
+    for (const row of A) {
+      if (!Array.isArray(row) || row.length !== cols) {
+        throw new Error("Matrix must be rectangular");
+      }
+      for (const v of row) {
+        if (typeof v !== "number" || Number.isNaN(v)) {
+          throw new Error("Matrix elements must be numbers");
+        }
+      }
+    }
+
+    return { rows: A.length, cols };
+  }
+
+  static add(A, B) {
+    const sa = Matrix.validate(A);
+    const sb = Matrix.validate(B);
+    if (sa.rows !== sb.rows || sa.cols !== sb.cols) {
+      throw new Error("Different sizes");
+    }
+    return A.map((r, i) => r.map((v, j) => v + B[i][j]));
+  }
+
+  static mulScalar(A, k) {
+    Matrix.validate(A);
+    if (typeof k !== "number" || Number.isNaN(k)) {
+      throw new Error("Invalid scalar");
+    }
+    return A.map(r => r.map(v => v * k));
+  }
+
+  static transpose(A) {
+    const { rows, cols } = Matrix.validate(A);
+    return Array.from({ length: cols }, (_, j) =>
+      Array.from({ length: rows }, (_, i) => A[i][j])
+    );
+  }
+
+  static mul(A, B) {
+    const sa = Matrix.validate(A);
+    const sb = Matrix.validate(B);
+    if (sa.cols !== sb.rows) {
+      throw new Error("Invalid dimensions");
+    }
+
+    return Array.from({ length: sa.rows }, (_, i) =>
+      Array.from({ length: sb.cols }, (_, j) => {
+        let sum = 0;
+        for (let k = 0; k < sa.cols; k++) {
+          sum += A[i][k] * B[k][j];
+        }
+        return sum;
+      })
+    );
+  }
+
+  static det(A) {
+    const { rows, cols } = Matrix.validate(A);
+    if (rows !== cols) throw new Error("Not square");
+    if (rows !== 2) throw new Error("Only 2x2 determinant supported");
+
+    return A[0][0] * A[1][1] - A[0][1] * A[1][0];
+  }
+
+  static inverse(A) {
+    const d = Matrix.det(A);
+    if (d === 0) throw new Error("Singular matrix");
+
+    return [
+      [ A[1][1] / d, -A[0][1] / d ],
+      [ -A[1][0] / d, A[0][0] / d ]
+    ];
+  }
+}
+
+module.exports = Matrix;
