@@ -1,13 +1,12 @@
 {
   "name": "lab1-mocha-chai-mtrx",
   "version": "1.0.0",
-  "description": "Matrix operations library (TDD) with Mocha and Chai",
-  "main": "src/matrix.js",
-  "scripts": {
-    "test": "mocha"
-  },
+  "private": true,
   "devDependencies": {
-    "mocha": "^10.2.0",
-    "chai": "^4.4.1"
+    "cypress": "^15.9.0"
+  },
+  "scripts": {
+    "cy:open": "cypress open",
+    "cy:run": "cypress run"
   }
 }
